@@ -10,14 +10,25 @@
 #include "opencv2/calib3d.hpp"
 
 class Stitcher {
+    int midIndex, optMethod;
+    cv::Mat stitchedImage;
+    std::vector<cv::Mat> homographyMats, transformImages;
+    std::vector<std::vector<cv::Point>> corners;
+    cv::Size resultSize;
+    inline double easeInOutOpt(double);
 public:
-    Stitcher(MatchingAlgorithm* algorithm): matchingAlgorithm(algorithm),
-        imageProcessor1{algorithm->imageProcessor1}, imageProcessor2{algorithm->imageProcessor2}{};
+    explicit Stitcher(MatchingAlgorithm& algorithm, int optMethod = easeInOut): algorithm(&algorithm), optMethod(optMethod){};
     void transform();
-    MatchingAlgorithm* matchingAlgorithm;
-    ImageProcessor *imageProcessor1, *imageProcessor2;
-private:
-    cv::Mat transformMat1, transformMat2;
+    int8_t homographyCompute();
+    std::vector<cv::Point> cornersCompute(const int& index);
+    void imageStitch();
+    void resultSizeCompute(int midHeight);
+    void optimizeSeam(int, int);
+    void train(const bool& show);
+    cv::Mat getResult();
+    MatchingAlgorithm* algorithm;
+    enum {leftTop, leftBottom, rightTop, rightBottom};
+    enum {liner, easeInOut};
 };
 
 

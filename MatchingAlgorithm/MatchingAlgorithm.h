@@ -4,22 +4,26 @@
 
 #ifndef IMAGESTITCHING_MATCHINGALGORITHM_H
 #define IMAGESTITCHING_MATCHINGALGORITHM_H
+#include <utility>
+
 #include "../ImageProcessor/ImageProcessor.h"
 #include "opencv2/opencv.hpp"
 
 class MatchingAlgorithm {
+    void findMaxIJ(const std::vector<std::vector<int>>& matrix, int& resI, int& resJ);
+    std::vector<std::vector<bool>> kruskal(std::vector<std::vector<int>>);
 public:
-    MatchingAlgorithm(ImageProcessor* img1, ImageProcessor* img2): imageProcessor1(img1), imageProcessor2(img2){};
-    virtual void featurePointsCompute(cv::Mat& image, std::vector<cv::KeyPoint>& keyPoint, cv::Mat& descriptor) = 0;
-    virtual void featurePointsMatch(const cv::Mat& descriptor1, const cv::Mat& descriptor2) = 0;
+    explicit MatchingAlgorithm(std::vector<ImageProcessor*> images, int8_t precision = 5): images(std::move(images)), precision(precision){};
+    void featurePointsMatch();
     void train(bool show = false);
-    void showFeaturePoints() const;
-    std::vector<cv::DMatch> getMatchPoints() const;
-    std::vector<cv::KeyPoint> getKeyPoints(u_short i) const;
-    ImageProcessor *imageProcessor1, *imageProcessor2;
+    void showFeaturePoints();
+    std::vector<cv::DMatch> twoImageMatch(int i, int j);
+    std::vector<cv::DMatch> getMatchPoints(int i) const;
+    std::vector<ImageProcessor*> images;
+    enum precision{HIGH = 4, MID, LOW};
 protected:
-    std::vector<cv::KeyPoint> keyPoint1, keyPoint2;
-    std::vector<cv::DMatch> matchPoints; //优秀匹配点
+    int8_t precision;
+    std::vector<std::vector<cv::DMatch>> matchPointsList; //优秀匹配点
 };
 
 

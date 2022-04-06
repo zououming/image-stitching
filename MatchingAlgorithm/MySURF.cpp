@@ -1,4 +1,4 @@
-//
+//f
 // Created by zououming on 2022/1/21.
 //
 
@@ -7,18 +7,18 @@ using namespace std;
 using namespace cv;
 using namespace xfeatures2d;
 
-void MySURF::featurePointsCompute(cv::Mat& image, std::vector<cv::KeyPoint>& keyPoint, cv::Mat& descriptor) {
-    surfDetector->detectAndCompute(image,Mat(), keyPoint, descriptor);
+void MySURF::featurePointsMatch() {
+    twoImageMatch(0, 1);
 }
 
-void MySURF::featurePointsMatch(const cv::Mat& descriptor1,const cv::Mat& descriptor2) {
+void MySURF::twoImageMatch(int i, int j) {
     FlannBasedMatcher matcher;
     std::vector<std::vector<DMatch>> matchRes;
 
-    std::vector<Mat> train_desc(1, descriptor1);
+    std::vector<Mat> train_desc(1, images[i]->getDescriptor());
     matcher.add(train_desc);
     matcher.train();
-    matcher.knnMatch(descriptor2, matchRes, 2);
+    matcher.knnMatch(images[j]->getDescriptor(), matchRes, 2);
 
     double threshold = double(precision) / 10;
     for(auto& match : matchRes)

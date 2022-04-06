@@ -1,11 +1,21 @@
 #include "ImageProcessor/ImageProcessor.h"
-#include "MatchingAlgorithm/MySURF.h"
+#include "MatchingAlgorithm/MatchingAlgorithm.h"
+#include "FeatureDetector/MySIFT.h"
+#include "Stitcher/Stitcher.h"
+using namespace std;
+
 int main() {
-    ImageProcessor ip("../image/home1.jpg");
-    ImageProcessor ip2("../image/home2.jpg");
-    ip.resize(500);
-    ip2.resize(500);
-    MySURF surf(&ip, &ip2, 2000, precision{HIGH});
-    surf.train(true);
+    string img_list[] = {"../image/3.jpg", "../image/1.jpg", "../image/2.jpg"};
+    vector<ImageProcessor*> images;
+    for(auto& img : img_list){
+        auto* img_processor = new ImageProcessor(img);
+        images.emplace_back(img_processor);
+    }
+    MatchingAlgorithm match(images);
+    match.train(0);
+    Stitcher stitcher(match);
+    stitcher.train(false);
+    auto res = stitcher.getResult();
+    cv::imwrite("./2.png", res);
     return 0;
 }
