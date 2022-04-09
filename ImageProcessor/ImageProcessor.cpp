@@ -4,6 +4,7 @@
 
 #include "ImageProcessor.h"
 #include "../FeatureDetector/MySIFT.h"
+
 using namespace cv;
 
 ImageProcessor::ImageProcessor(const std::string& imgPath, const int& height) {
@@ -17,15 +18,11 @@ ImageProcessor::ImageProcessor(const std::string& imgPath, const int& height) {
 
 void ImageProcessor::imageShow(const std::string& imgName, const int& time){
     imshow(imgName, image);
-    waitKey(time);
+    cv::waitKey(time);
 }
 
 Mat ImageProcessor::getImage(){
-    return image.clone();
-}
-
-Mat ImageProcessor::getGrayScale(){
-    return grayScale.clone();
+    return image;
 }
 
 void ImageProcessor::resize(int height) {
@@ -45,4 +42,12 @@ cv::Mat ImageProcessor::getDescriptor(){
 
 std::string ImageProcessor::getPath() {
     return path;
+}
+
+void ImageProcessor::setCorner(std::vector<cv::Point> corner) {
+    this->corner = corner;
+}
+
+std::vector<cv::Point> ImageProcessor::getCorner() {
+    return corner;
 }
